@@ -9,6 +9,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.Dragboard;
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
@@ -79,6 +80,17 @@ public class main extends Application {
                 ((ImageView)event.getGestureSource()).setImage(iv.getImage());//PEUT PTT BUGGER JE CROIS??
                 iv.setImage(content);
                 event.setDropCompleted(true);
+                if(isGameWon(allImage,allImageViews)){
+                    Alert alerte = new Alert(Alert.AlertType.INFORMATION);
+                    alerte.setTitle("Information");
+                    alerte.setHeaderText("Vous avez réussis!");
+                    alerte.setContentText("Voulez vous réessayer?");
+                    alerte.showAndWait();
+                    ButtonType result = alerte.showAndWait().get();
+                    if(result == ButtonType.OK){
+                        allImageViews = mix(allImage,allImageViews);
+                    }
+                }
             });
         }
 
@@ -98,18 +110,6 @@ public class main extends Application {
         HBox bas = new HBox(allImageViews[6],allImageViews[7],allImageViews[8]);bas.setAlignment(Pos.CENTER);
         VBox all = new VBox(haut,millieux,bas);all.setAlignment(Pos.CENTER);
         borderPane.setCenter(all);
-        borderPane.setOnDragExited(event -> {
-            if(isGameWon(allImage,allImageViews)){
-                Alert alerte = new Alert(Alert.AlertType.INFORMATION);
-                alerte.setTitle("Information");
-                alerte.setHeaderText("Vous avez réussis!");
-                alerte.setContentText("Voulez vous réessayer?");
-                ButtonType result = alerte.showAndWait().get();
-                if(result == ButtonType.OK){
-                    allImageViews = mix(allImage,allImageViews);
-                }
-            }
-        });
 
 
 
@@ -123,7 +123,13 @@ public class main extends Application {
         primaryStage.setMaxWidth(2160);
 
         primaryStage.show();
-        primaryStage.setScene(new Scene(borderPane));
+        Scene mainScene = new Scene(borderPane);
+        mainScene.setOnKeyPressed(event -> {
+            if(event.isControlDown()&&event.getCode()== KeyCode.M){
+                allImageViews=mix(allImage,allImageViews);
+            }
+        });
+        primaryStage.setScene(mainScene);
     }
 
 
